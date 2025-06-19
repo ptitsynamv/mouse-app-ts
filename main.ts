@@ -1,16 +1,24 @@
-Deno.serve({ hostname: 'localhost', port: 8080 }, async (req) => {
-  console.log('Method:', req.method);
+import { HOME_ROUTE, homeHandler } from './routes/home.ts';
+import { MOUSE_ROUTE, mouseHandler } from './routes/mouse.ts';
 
-  const url = new URL(req.url);
-  console.log('Path:', url.pathname);
-  console.log('Query parameters:', url.searchParams);
+Deno.serve(
+  {
+    hostname: 'localhost',
+    port: 3000,
+  },
+  (req) => {
+    const url = new URL(req.url);
 
-  console.log('Headers:', req.headers);
+    if (HOME_ROUTE.test(url)) {
+      return homeHandler(req);
+    }
+    if (MOUSE_ROUTE.test(url)) {
+      return mouseHandler(req);
+    }
 
-  if (req.body) {
-    const body = await req.text();
-    console.log('Body:', body);
+    return new Response('Not Found', {
+      status: 404,
+      headers: { 'Content-Type': 'text/plain' },
+    });
   }
-
-  return new Response('Hello, World!');
-});
+);
