@@ -1,8 +1,16 @@
-export function add(a: number, b: number): number {
-  return a + b;
-}
+Deno.serve({ hostname: 'localhost', port: 8080 }, async (req) => {
+  console.log('Method:', req.method);
 
-// Learn more at https://docs.deno.com/runtime/manual/examples/module_metadata#concepts
-if (import.meta.main) {
-  console.log("Add 2 + 3 =", add(2, 3));
-}
+  const url = new URL(req.url);
+  console.log('Path:', url.pathname);
+  console.log('Query parameters:', url.searchParams);
+
+  console.log('Headers:', req.headers);
+
+  if (req.body) {
+    const body = await req.text();
+    console.log('Body:', body);
+  }
+
+  return new Response('Hello, World!');
+});
